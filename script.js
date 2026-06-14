@@ -588,33 +588,38 @@ async function handleOpenBox() {
 
   btnOpen.disabled = true;
 
-  // Phase 1: Shake (0.9s)
-  boxWrapper.classList.add('shaking');
-  audio.shake();
-  await sleep(1000);
+  try {
+    // Phase 1: Shake (0.9s)
+    boxWrapper.classList.add('shaking');
+    try { audio.shake(); } catch(e) {}
+    await sleep(1000);
 
-  // Phase 2: Glow emerging (0.7s)
-  boxWrapper.classList.remove('shaking');
-  boxGlow.classList.add('active');
-  lightRays.classList.add('active');
-  audio.glowEmerging();
-  await sleep(750);
+    // Phase 2: Glow emerging (0.7s)
+    boxWrapper.classList.remove('shaking');
+    boxGlow.classList.add('active');
+    lightRays.classList.add('active');
+    try { audio.glowEmerging(); } catch(e) {}
+    await sleep(750);
 
-  // Phase 3: Lid open (0.7s)
-  boxWrapper.classList.add('opening');
-  audio.lidOpen();
-  await sleep(750);
+    // Phase 3: Lid open (0.7s)
+    boxWrapper.classList.add('opening');
+    try { audio.lidOpen(); } catch(e) {}
+    await sleep(750);
 
-  // Phase 4: Character emerge
-  const char = state.openBox();
-  boxWrapper.classList.remove('opening');
-  boxWrapper.classList.add('opened');
-  boxGlow.style.opacity = '0.6';
-  lightRays.classList.add('active');
+    // Phase 4: Character emerge
+    const char = state.openBox();
+    boxWrapper.classList.remove('opening');
+    boxWrapper.classList.add('opened');
+    boxGlow.style.opacity = '0.6';
+    lightRays.classList.add('active');
 
-  await sleep(200);
-  audio.charEmerge();
-  showReveal(char);
+    await sleep(200);
+    try { audio.charEmerge(); } catch(e) {}
+    showReveal(char);
+  } catch(e) {
+    console.error('开盒失败:', e);
+    toast('出了点小问题，再试一次吧～');
+  }
   updateBoxScreen();
 }
 
