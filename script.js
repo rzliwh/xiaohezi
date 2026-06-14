@@ -618,9 +618,11 @@ async function handleOpenBox() {
     showReveal(char);
   } catch(e) {
     console.error('开盒失败:', e);
-    toast('出了点小问题，再试一次吧～');
+    toast('出了点小问题，刷新页面试试吧～');
+  } finally {
+    updateBoxScreen();
+    btnOpen.disabled = false;
   }
-  updateBoxScreen();
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
