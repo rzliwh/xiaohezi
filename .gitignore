@@ -1,0 +1,11 @@
+# 豆包生成的 PNG（当前版本用纯 SVG，不用这些）
+assets/
+picture/
+
+# 任务说明（工作文件，不上线）
+CC_TASK*.md
+eye-offset.json
+
+# 系统文件
+.DS_Store
+Thumbs.db

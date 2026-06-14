@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>小盒子 · 每天一只小东西</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ====== Toast 提示 ====== -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- ====== 1. 盒子主页 ====== -->
+  <div id="screen-box" class="screen">
+    <div class="box-scene">
+      <div class="box-stage">
+        <!-- 盒子主体 -->
+        <div class="box-wrapper" id="box-wrapper">
+          <!-- 盖子 -->
+          <div class="box-lid" id="box-lid">
+            <div class="lid-top"></div>
+            <div class="lid-ribbon"></div>
+            <div class="lid-bow">
+              <div class="bow-loop bow-left"></div>
+              <div class="bow-loop bow-right"></div>
+              <div class="bow-knot"></div>
+            </div>
+          </div>
+          <!-- 盒身 -->
+          <div class="box-body">
+            <div class="body-front"></div>
+            <div class="body-ribbon-v"></div>
+          </div>
+          <!-- 光效 -->
+          <div class="box-glow" id="box-glow"></div>
+          <!-- 光线溢出 -->
+          <div class="light-rays" id="light-rays"></div>
+        </div>
+        <!-- 影子 -->
+        <div class="box-shadow"></div>
+      </div>
+
+      <p class="box-hint" id="box-hint">每天一个盲袋，今天有一只新的小东西在等你</p>
+      <button class="btn btn-primary" id="btn-open">✨ 打开今天的盲袋</button>
+      <button class="btn btn-ghost" id="btn-goto-shelf">📦 看看我的架子</button>
+    </div>
+  </div>
+
+  <!-- ====== 2. 开盒揭示 ====== -->
+  <div id="screen-reveal" class="screen hidden">
+    <div class="reveal-scene">
+      <div class="reveal-rays" id="reveal-rays"></div>
+      <div class="reveal-character-container" id="reveal-char-container">
+        <!-- 角色 SVG 动态插入 -->
+      </div>
+      <div class="reveal-info">
+        <h2 class="reveal-name" id="reveal-name"></h2>
+        <p class="reveal-tagline" id="reveal-tagline"></p>
+        <span class="reveal-rarity" id="reveal-rarity"></span>
+      </div>
+      <button class="btn btn-primary" id="btn-reveal-keep">放到架子上 ✨</button>
+    </div>
+  </div>
+
+  <!-- ====== 3. 架子 ====== -->
+  <div id="screen-shelf" class="screen hidden">
+    <div class="shelf-scene">
+      <div class="shelf-header">
+        <button class="btn btn-icon" id="btn-shelf-back">←</button>
+        <h2>我的架子</h2>
+        <button class="btn btn-icon" id="btn-settings" title="设置">⚙️</button>
+        <span class="shelf-count" id="shelf-count">0 / 7</span>
+      </div>
+
+      <div class="shelf-grid-wrapper">
+        <div class="shelf-grid" id="shelf-grid">
+          <!-- 动态填充格子 -->
+        </div>
+      </div>
+
+      <div class="shelf-pagination" id="shelf-pagination">
+        <button class="btn btn-icon" id="btn-prev-page">←</button>
+        <span class="page-indicator" id="page-indicator">1 / 1</span>
+        <button class="btn btn-icon" id="btn-next-page">→</button>
+      </div>
+
+      <button class="btn btn-ghost" id="btn-shelf-to-box">回首页</button>
+    </div>
+  </div>
+
+  <!-- ====== 设置面板 ====== -->
+  <div class="settings-overlay" id="settings-overlay">
+    <div class="settings-panel" id="settings-panel">
+      <h3>⚙️ 存档管理</h3>
+      <p>导出存档文件，换设备时可以导入。你的小东西们就一个都不会丢。</p>
+      <div class="settings-row">
+        <button class="btn-sm" id="btn-export">📤 导出存档</button>
+        <button class="btn-sm" id="btn-import">📥 导入存档</button>
+      </div>
+      <input type="file" id="file-import" accept=".json">
+      <hr class="settings-divider">
+      <p style="font-size:11px;color:#c5c0c8;">数据存于浏览器 localStorage，不会被上传到任何服务器。</p>
+      <button class="btn btn-ghost" id="btn-settings-close" style="width:100%;margin-top:4px;">关闭</button>
+    </div>
+  </div>
+
+  <!-- ====== 4. 陪伴模式 ====== -->
+  <div id="screen-companion" class="screen hidden">
+    <div class="companion-scene">
+      <div class="companion-header">
+        <button class="btn btn-icon" id="btn-companion-back">←</button>
+        <span class="companion-title" id="companion-title"></span>
+        <button class="btn btn-icon" id="btn-companion-shelf">📦</button>
+      </div>
+
+      <div class="companion-room" id="companion-room">
+        <!-- 房间背景元素 -->
+        <div class="room-window">
+          <div class="window-sky"></div>
+          <div class="window-frame"></div>
+        </div>
+        <div class="room-floor"></div>
+        <div class="room-shelf-small"></div>
+
+        <!-- 角色容器（可拖拽旋转） -->
+        <div class="companion-character" id="companion-character">
+          <!-- 角色 SVG 动态插入 -->
+        </div>
+
+        <!-- 冒出的爱心/表情 -->
+        <div class="companion-fx" id="companion-fx"></div>
+      </div>
+
+      <p class="companion-hint" id="companion-hint">点一点它，它会很高兴</p>
+    </div>
+  </div>
+
+  <!-- ====== 5. 日签卡片 ====== -->
+  <div id="screen-card" class="screen hidden">
+    <div class="card-overlay">
+      <div class="card" id="daily-card">
+        <div class="card-inner">
+          <div class="card-char" id="card-char"></div>
+          <div class="card-char-name" id="card-char-name"></div>
+          <div class="card-date" id="card-date"></div>
+          <div class="card-quote" id="card-quote"></div>
+          <div class="card-brand">小盒子</div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary" id="btn-card-save">💾 保存卡片</button>
+        <button class="btn btn-ghost" id="btn-card-close">继续逛逛</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 隐藏 canvas 用于生成卡片图片 -->
+  <canvas id="card-canvas" width="400" height="600" style="display:none;"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
