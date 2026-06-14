@@ -1011,7 +1011,6 @@ const cardChar    = document.getElementById('card-char');
 const cardCharName= document.getElementById('card-char-name');
 const cardDate    = document.getElementById('card-date');
 const cardQuote   = document.getElementById('card-quote');
-const cardCanvas  = document.getElementById('card-canvas');
 
 function showCardScreen(char) {
   cardChar.innerHTML = makeCharSVG(char, 110, 'idle');
@@ -1020,79 +1019,9 @@ function showCardScreen(char) {
   cardDate.textContent = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
   cardQuote.textContent = `"${QUOTES[Math.floor(Math.random()*QUOTES.length)]}"`;
   dailyCard.style.background = `linear-gradient(180deg, #fffefb 0%, ${char.colors.primary}14 50%, ${char.colors.primary}28 100%)`;
-  renderCanvasCard(char);
   showScreen('card');
 }
 
-function renderCanvasCard(char) {
-  const canvas = cardCanvas, ctx = canvas.getContext('2d');
-  const W=400, H=600;
-  ctx.clearRect(0,0,W,H);
-  // BG
-  const bg = ctx.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,'#fffefb');
-  bg.addColorStop(0.5, char.colors.primary+'14');
-  bg.addColorStop(1, char.colors.primary+'28');
-  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
-  // Rounded rect clip
-  ctx.beginPath(); roundRect(ctx,0,0,W,H,24); ctx.clip();
-  // SVG → image
-  const svgStr = makeCharSVG(char, 170, 'idle');
-  const blob = new Blob([svgStr], {type:'image/svg+xml;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const img = new Image();
-  img.onload = () => {
-    ctx.drawImage(img, (W-160)/2, 70, 160, 160);
-    // Name
-    ctx.fillStyle='#4a4458'; ctx.font='bold 26px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
-    ctx.textAlign='center'; ctx.fillText(char.name, W/2, 270);
-    // Date
-    const now = new Date();
-    ctx.fillStyle='#c5c0c8'; ctx.font='14px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
-    ctx.fillText(`${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`, W/2, 300);
-    // Divider
-    ctx.strokeStyle='rgba(0,0,0,0.05)'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(80,330); ctx.lineTo(W-80,330); ctx.stroke();
-    // Quote
-    ctx.fillStyle='#8a8498'; ctx.font='italic 15px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
-    wrapText(ctx, `"${QUOTES[Math.floor(Math.random()*QUOTES.length)]}"`, W/2, 370, W-120, 28);
-    // Divider
-    ctx.beginPath(); ctx.moveTo(80,450); ctx.lineTo(W-80,450); ctx.stroke();
-    // Brand
-    ctx.fillStyle='#d8d0d8'; ctx.font='12px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
-    ctx.fillText('小盒子', W/2, 500);
-    // Decorations
-    ctx.fillStyle = char.colors.primary+'28';
-    ctx.beginPath(); ctx.arc(50,550,18,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(350,550,18,0,Math.PI*2); ctx.fill();
-    URL.revokeObjectURL(url);
-  };
-  img.src = url;
-}
-
-function roundRect(ctx,x,y,w,h,r) {
-  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
-  ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r);
-  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h);
-  ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r);
-  ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
-}
-function wrapText(ctx,text,x,y,maxW,lh) {
-  const chars = text.split(''); let line='', cy=y;
-  for(let i=0;i<chars.length;i++) {
-    const t = line+chars[i];
-    if(ctx.measureText(t).width>maxW && line.length>0){ctx.fillText(line,x,cy);line=chars[i];cy+=lh;}
-    else line=t;
-  }
-  ctx.fillText(line,x,cy);
-}
-
-document.getElementById('btn-card-save').addEventListener('click', ()=>{
-  const a = document.createElement('a');
-  a.download = `小盒子-${new Date().toISOString().split('T')[0]}.png`;
-  a.href = cardCanvas.toDataURL('image/png'); a.click();
-  toast('卡片已保存！');
-});
 document.getElementById('btn-card-close').addEventListener('click', ()=>{ showScreen('box'); updateBoxScreen(); });
 
 // =============================================
