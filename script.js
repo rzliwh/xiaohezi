@@ -469,7 +469,7 @@ class GameState {
     this.lastOpen = slot;
     this.todayCharId = char.id;
     if (!this.collection.find(c => c.id === char.id)) {
-      this.collection.push({ id: char.id, name: char.name, rarity: char.rarity, date: today });
+      this.collection.push({ id: char.id, name: char.name, rarity: char.rarity, date: new Date().toISOString() });
       if (char.rarity === 'hidden') this.hiddenFound = true;
     }
     this.save();
